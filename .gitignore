@@ -1,0 +1,16 @@
+Makefile*
+*.pdb
+*.exe
+*.dll
+*.ilk
+*.obj
+*.lib
+*.res
+*.exp
+*.manifest
+*_resource.rc
+moc_*.cpp
+*.moc
+.qmake.cache
+config.log
+tmp
