@@ -1,4 +1,5 @@
 TARGET  = qplastiquestyle
+PLUGIN_TYPE = styles
 load(qt_plugin)
 
 QT = core core-private gui gui-private widgets
@@ -10,7 +11,3 @@ SOURCES += plugin.cpp
 include(../shared/shared.pri)
 
 OTHER_FILES += plastique.json
-
-DESTDIR = $$QT.gui.plugins/styles
-target.path += $$[QT_INSTALL_PLUGINS]/styles
-INSTALLS += target
