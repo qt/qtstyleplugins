@@ -42,7 +42,7 @@
 #ifndef QPLASTIQUESTYLE_H
 #define QPLASTIQUESTYLE_H
 
-#include <QtWidgets/qwindowsstyle.h>
+#include <QtWidgets/qproxystyle.h>
 #include <QtCore/qelapsedtimer.h>
 
 QT_BEGIN_HEADER
@@ -51,7 +51,7 @@ QT_BEGIN_NAMESPACE
 
 class QProgressBar;
 
-class Q_WIDGETS_EXPORT QPlastiqueStyle : public QWindowsStyle
+class Q_WIDGETS_EXPORT QPlastiqueStyle : public QProxyStyle
 {
     Q_OBJECT
 

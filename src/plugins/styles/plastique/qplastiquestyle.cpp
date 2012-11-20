@@ -85,6 +85,7 @@ static const int blueFrameWidth =  2;  // with of line edit focus frame
 #include <limits.h>
 #include <qpa/qplatformtheme.h>
 #include <private/qguiapplication_p.h>
+#include <qstylefactory.h>
 
 #include "qstylehelper_p.h"
 #include "qstylecache_p.h"
@@ -997,7 +998,7 @@ static void qt_plastique_draw_handle(QPainter *painter, const QStyleOption *opti
     Constructs a QPlastiqueStyle object.
 */
 QPlastiqueStyle::QPlastiqueStyle()
-    : QWindowsStyle(), animateStep(0), progressBarAnimateTimer(0)
+    : QProxyStyle(QStyleFactory::create(QLatin1String("Windows"))), animateStep(0), progressBarAnimateTimer(0)
 {
     setObjectName(QLatin1String("Plastique"));
 }
@@ -1122,7 +1123,7 @@ void QPlastiqueStyle::drawPrimitive(PrimitiveElement element, const QStyleOption
         if (const QStyleOptionTabWidgetFrame *twf = qstyleoption_cast<const QStyleOptionTabWidgetFrame *>(option)) {
             if (twf->shape != QTabBar::RoundedNorth && twf->shape != QTabBar::RoundedWest &&
                 twf->shape != QTabBar::RoundedSouth && twf->shape != QTabBar::RoundedEast) {
-                QWindowsStyle::drawPrimitive(element, option, painter, widget);
+                QProxyStyle::drawPrimitive(element, option, painter, widget);
                 break;
             }
 
@@ -1256,7 +1257,7 @@ void QPlastiqueStyle::drawPrimitive(PrimitiveElement element, const QStyleOption
         if (const QStyleOptionTabBarBase *tbb = qstyleoption_cast<const QStyleOptionTabBarBase *>(option)) {
             if (tbb->shape != QTabBar::RoundedNorth && tbb->shape != QTabBar::RoundedWest &&
                 tbb->shape != QTabBar::RoundedSouth && tbb->shape != QTabBar::RoundedEast) {
-                QWindowsStyle::drawPrimitive(element, option, painter, widget);
+                QProxyStyle::drawPrimitive(element, option, painter, widget);
                 break;
             }
 
@@ -1408,7 +1409,7 @@ void QPlastiqueStyle::drawPrimitive(PrimitiveElement element, const QStyleOption
         bool usedAntialiasing = painter->renderHints() & QPainter::Antialiasing;
         if (!usedAntialiasing)
             painter->setRenderHint(QPainter::Antialiasing);
-        QWindowsStyle::drawPrimitive(element, option, painter, widget);
+        QProxyStyle::drawPrimitive(element, option, painter, widget);
         if (!usedAntialiasing)
             painter->setRenderHint(QPainter::Antialiasing, false);
         break;
@@ -1883,7 +1884,7 @@ void QPlastiqueStyle::drawPrimitive(PrimitiveElement element, const QStyleOption
     }
         break;
     default:
-        QWindowsStyle::drawPrimitive(element, option, painter, widget);
+        QProxyStyle::drawPrimitive(element, option, painter, widget);
         break;
     }
 }
@@ -1924,7 +1925,7 @@ void QPlastiqueStyle::drawControl(ControlElement element, const QStyleOption *op
 
             if (tab->shape != QTabBar::RoundedNorth && tab->shape != QTabBar::RoundedWest &&
                 tab->shape != QTabBar::RoundedSouth && tab->shape != QTabBar::RoundedEast) {
-                QWindowsStyle::drawControl(element, option, painter, widget);
+                QProxyStyle::drawControl(element, option, painter, widget);
                 break;
             }
 
@@ -3614,7 +3615,7 @@ void QPlastiqueStyle::drawControl(ControlElement element, const QStyleOption *op
                 // we need the label to be drawn using ButtonText where it
                 // would usually use Text.
                 painter->setPen(QPen(comboBox->palette.buttonText(), 0));
-                QWindowsStyle::drawControl(element, option, painter, widget);
+                QProxyStyle::drawControl(element, option, painter, widget);
             } else if (!comboBox->currentIcon.isNull()) {
                 {
                     QRect editRect = proxy()->subControlRect(CC_ComboBox, comboBox, SC_ComboBoxEditField, widget);
@@ -3639,7 +3640,7 @@ void QPlastiqueStyle::drawControl(ControlElement element, const QStyleOption *op
                     painter->restore();
                 }
             } else {
-                QWindowsStyle::drawControl(element, option, painter, widget);
+                QProxyStyle::drawControl(element, option, painter, widget);
             }
 
             painter->restore();
@@ -3647,7 +3648,7 @@ void QPlastiqueStyle::drawControl(ControlElement element, const QStyleOption *op
         break;
 #endif
     default:
-        QWindowsStyle::drawControl(element, option, painter, widget);
+        QProxyStyle::drawControl(element, option, painter, widget);
         break;
     }
 }
@@ -4792,7 +4793,7 @@ void QPlastiqueStyle::drawComplexControl(ComplexControl control, const QStyleOpt
                 painter->drawPath(path);
             }
 
-            // from qwindowsstyle.cpp
+            // from QProxyStyle.cpp
             if ((titleBar->subControls & SC_TitleBarSysMenu) && (titleBar->titleBarFlags & Qt::WindowSystemMenuHint)) {
                 bool hover = (titleBar->activeSubControls & SC_TitleBarSysMenu) && (titleBar->state & State_MouseOver);
                 bool sunken = (titleBar->activeSubControls & SC_TitleBarSysMenu) && (titleBar->state & State_Sunken);
@@ -4823,7 +4824,7 @@ void QPlastiqueStyle::drawComplexControl(ComplexControl control, const QStyleOpt
         break;
 #endif // QT_NO_DIAL
     default:
-        QWindowsStyle::drawComplexControl(control, option, painter, widget);
+        QProxyStyle::drawComplexControl(control, option, painter, widget);
         break;
     }
 }
@@ -4834,7 +4835,7 @@ void QPlastiqueStyle::drawComplexControl(ComplexControl control, const QStyleOpt
 QSize QPlastiqueStyle::sizeFromContents(ContentsType type, const QStyleOption *option,
                                         const QSize &size, const QWidget *widget) const
 {
-    QSize newSize = QWindowsStyle::sizeFromContents(type, option, size, widget);
+    QSize newSize = QProxyStyle::sizeFromContents(type, option, size, widget);
 
     switch (type) {
     case CT_RadioButton:
@@ -4918,7 +4919,7 @@ QRect QPlastiqueStyle::subElementRect(SubElement element, const QStyleOption *op
     switch (element) {
     case SE_RadioButtonIndicator:
         rect = visualRect(option->direction, option->rect,
-                          QWindowsStyle::subElementRect(element, option, widget)).adjusted(0, 0, 1, 1);
+                          QProxyStyle::subElementRect(element, option, widget)).adjusted(0, 0, 1, 1);
         break;
 #ifndef QT_NO_PROGRESSBAR
     case SE_ProgressBarLabel:
@@ -4927,7 +4928,7 @@ QRect QPlastiqueStyle::subElementRect(SubElement element, const QStyleOption *op
         return option->rect;
 #endif // QT_NO_PROGRESSBAR
     default:
-        return QWindowsStyle::subElementRect(element, option, widget);
+        return QProxyStyle::subElementRect(element, option, widget);
     }
 
     return visualRect(option->direction, option->rect, rect);
@@ -4939,7 +4940,7 @@ QRect QPlastiqueStyle::subElementRect(SubElement element, const QStyleOption *op
 QRect QPlastiqueStyle::subControlRect(ComplexControl control, const QStyleOptionComplex *option,
                                       SubControl subControl, const QWidget *widget) const
 {
-    QRect rect = QWindowsStyle::subControlRect(control, option, subControl, widget);
+    QRect rect = QProxyStyle::subControlRect(control, option, subControl, widget);
 
     switch (control) {
 #ifndef QT_NO_SLIDER
@@ -5317,7 +5318,7 @@ int QPlastiqueStyle::styleHint(StyleHint hint, const QStyleOption *option, const
         break;
 #endif
     default:
-        ret = QWindowsStyle::styleHint(hint, option, widget, returnData);
+        ret = QProxyStyle::styleHint(hint, option, widget, returnData);
         break;
     }
     return ret;
@@ -5370,7 +5371,7 @@ QStyle::SubControl QPlastiqueStyle::hitTestComplexControl(ComplexControl control
         break;
     }
 
-    return ret != SC_None ? ret : QWindowsStyle::hitTestComplexControl(control, option, pos, widget);
+    return ret != SC_None ? ret : QProxyStyle::hitTestComplexControl(control, option, pos, widget);
 }
 
 /*!
@@ -5503,7 +5504,7 @@ int QPlastiqueStyle::pixelMetric(PixelMetric metric, const QStyleOption *option,
         break;
     }
 
-    return ret != -1 ? ret : QWindowsStyle::pixelMetric(metric, option, widget);
+    return ret != -1 ? ret : QProxyStyle::pixelMetric(metric, option, widget);
 }
 
 /*!
@@ -5686,7 +5687,7 @@ void QPlastiqueStyle::unpolish(QWidget *widget)
 */
 void QPlastiqueStyle::polish(QApplication *app)
 {
-    QWindowsStyle::polish(app);
+    QProxyStyle::polish(app);
 }
 
 /*!
@@ -5694,7 +5695,7 @@ void QPlastiqueStyle::polish(QApplication *app)
 */
 void QPlastiqueStyle::polish(QPalette &pal)
 {
-    QWindowsStyle::polish(pal);
+    QProxyStyle::polish(pal);
 #ifdef Q_WS_MAC
     pal.setBrush(QPalette::Shadow, Qt::black);
 #endif
@@ -5705,7 +5706,7 @@ void QPlastiqueStyle::polish(QPalette &pal)
 */
 void QPlastiqueStyle::unpolish(QApplication *app)
 {
-    QWindowsStyle::unpolish(app);
+    QProxyStyle::unpolish(app);
 }
 
 /*!
@@ -5714,7 +5715,7 @@ void QPlastiqueStyle::unpolish(QApplication *app)
 QIcon QPlastiqueStyle::standardIcon(StandardPixmap standardIcon, const QStyleOption *option,
                                     const QWidget *widget) const
 {
-    return QWindowsStyle::standardIcon(standardIcon, option, widget);
+    return QProxyStyle::standardIcon(standardIcon, option, widget);
 }
 
 /*!
@@ -5723,7 +5724,7 @@ QIcon QPlastiqueStyle::standardIcon(StandardPixmap standardIcon, const QStyleOpt
 QPixmap QPlastiqueStyle::standardPixmap(StandardPixmap standardPixmap, const QStyleOption *opt,
                                         const QWidget *widget) const
 {
-    return QWindowsStyle::standardPixmap(standardPixmap, opt, widget);
+    return QProxyStyle::standardPixmap(standardPixmap, opt, widget);
 }
 
 // this works as long as we have at most 16 different control types
@@ -5836,7 +5837,7 @@ bool QPlastiqueStyle::eventFilter(QObject *watched, QEvent *event)
     }
 #endif // QT_NO_PROGRESSBAR
 
-    return QWindowsStyle::eventFilter(watched, event);
+    return QProxyStyle::eventFilter(watched, event);
 }
 
 /*!
