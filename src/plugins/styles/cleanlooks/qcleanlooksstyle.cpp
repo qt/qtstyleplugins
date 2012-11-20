@@ -62,6 +62,7 @@
 #include <qtoolbar.h>
 #include <qwizard.h>
 #include <qlibrary.h>
+#include <qstylefactory.h>
 
 #include "qstylehelper_p.h"
 #include "qstylecache_p.h"
@@ -605,7 +606,7 @@ static void qt_cleanlooks_draw_mdibutton(QPainter *painter, const QStyleOptionTi
 /*!
     Constructs a QCleanlooksStyle object.
 */
-QCleanlooksStyle::QCleanlooksStyle() : QWindowsStyle(), animateStep(0), animateTimer(0)
+QCleanlooksStyle::QCleanlooksStyle() : QProxyStyle(QStyleFactory::create(QLatin1String("Windows"))), animateStep(0), animateTimer(0)
 {
     setObjectName(QLatin1String("CleanLooks"));
     startTime.start();
@@ -722,7 +723,7 @@ void QCleanlooksStyle::drawPrimitive(PrimitiveElement elem,
             case QTabBar::TriangularWest:
             case QTabBar::TriangularSouth:
                 painter->restore();
-                QWindowsStyle::drawPrimitive(elem, option, painter, widget);
+                QProxyStyle::drawPrimitive(elem, option, painter, widget);
                 return;
             }
             painter->restore();
@@ -1352,7 +1353,7 @@ void QCleanlooksStyle::drawPrimitive(PrimitiveElement elem,
 
 #endif // QT_NO_TABBAR
     default:
-        QWindowsStyle::drawPrimitive(elem, option, painter, widget);
+        QProxyStyle::drawPrimitive(elem, option, painter, widget);
         break;
     }
 }
@@ -1389,7 +1390,7 @@ void QCleanlooksStyle::drawControl(ControlElement element, const QStyleOption *o
                 painter->fillRect(rect, btn->palette.background().color().lighter(104));
             QStyleOptionButton copy = *btn;
             copy.rect.adjust(2, 0, -2, 0);
-            QWindowsStyle::drawControl(element, &copy, painter, widget);
+            QProxyStyle::drawControl(element, &copy, painter, widget);
         }
         break;
     case CE_Splitter:
@@ -2230,7 +2231,7 @@ void QCleanlooksStyle::drawControl(ControlElement element, const QStyleOption *o
                 break;
             default:
                 painter->restore();
-                QWindowsStyle::drawControl(element, tab, painter, widget);
+                QProxyStyle::drawControl(element, tab, painter, widget);
                 return;
             }
 
@@ -2332,7 +2333,7 @@ void QCleanlooksStyle::drawControl(ControlElement element, const QStyleOption *o
 
 #endif // QT_NO_TABBAR
     default:
-        QWindowsStyle::drawControl(element,option,painter,widget);
+        QProxyStyle::drawControl(element,option,painter,widget);
         break;
     }
 }
@@ -2342,7 +2343,7 @@ void QCleanlooksStyle::drawControl(ControlElement element, const QStyleOption *o
 */
 QPalette QCleanlooksStyle::standardPalette () const
 {
-    QPalette palette = QWindowsStyle::standardPalette();
+    QPalette palette = QProxyStyle::standardPalette();
     palette.setBrush(QPalette::Active, QPalette::Highlight, QColor(98, 140, 178));
     palette.setBrush(QPalette::Inactive, QPalette::Highlight, QColor(145, 141, 126));
     palette.setBrush(QPalette::Disabled, QPalette::Highlight, QColor(145, 141, 126));
@@ -3648,7 +3649,7 @@ void QCleanlooksStyle::drawComplexControl(ComplexControl control, const QStyleOp
         break;
 #endif // QT_NO_DIAL
         default:
-            QWindowsStyle::drawComplexControl(control, option, painter, widget);
+            QProxyStyle::drawComplexControl(control, option, painter, widget);
         break;
     }
 }
@@ -3750,7 +3751,7 @@ int QCleanlooksStyle::pixelMetric(PixelMetric metric, const QStyleOption *option
         break;
     }
 
-    return ret != -1 ? ret : QWindowsStyle::pixelMetric(metric, option, widget);
+    return ret != -1 ? ret : QProxyStyle::pixelMetric(metric, option, widget);
 }
 
 /*!
@@ -3759,7 +3760,7 @@ int QCleanlooksStyle::pixelMetric(PixelMetric metric, const QStyleOption *option
 QSize QCleanlooksStyle::sizeFromContents(ContentsType type, const QStyleOption *option,
                                         const QSize &size, const QWidget *widget) const
 {
-    QSize newSize = QWindowsStyle::sizeFromContents(type, option, size, widget);
+    QSize newSize = QProxyStyle::sizeFromContents(type, option, size, widget);
     switch (type) {
     case CT_PushButton:
         if (const QStyleOptionButton *btn = qstyleoption_cast<const QStyleOptionButton *>(option)) {
@@ -3853,7 +3854,7 @@ QSize QCleanlooksStyle::sizeFromContents(ContentsType type, const QStyleOption *
 */
 void QCleanlooksStyle::polish(QApplication *app)
 {
-    QWindowsStyle::polish(app);
+    QProxyStyle::polish(app);
 }
 
 /*!
@@ -3861,7 +3862,7 @@ void QCleanlooksStyle::polish(QApplication *app)
 */
 void QCleanlooksStyle::polish(QWidget *widget)
 {
-    QWindowsStyle::polish(widget);
+    QProxyStyle::polish(widget);
     if (qobject_cast<QAbstractButton*>(widget)
 #ifndef QT_NO_COMBOBOX
         || qobject_cast<QComboBox *>(widget)
@@ -3896,7 +3897,7 @@ void QCleanlooksStyle::polish(QWidget *widget)
 */
 void QCleanlooksStyle::polish(QPalette &pal)
 {
-    QWindowsStyle::polish(pal);
+    QProxyStyle::polish(pal);
     //this is a workaround for some themes such as Human, where the contrast
     //between text and background is too low.
     QColor highlight = pal.highlight().color();
@@ -3912,7 +3913,7 @@ void QCleanlooksStyle::polish(QPalette &pal)
 */
 void QCleanlooksStyle::unpolish(QWidget *widget)
 {
-    QWindowsStyle::unpolish(widget);
+    QProxyStyle::unpolish(widget);
     if (qobject_cast<QAbstractButton*>(widget)
 #ifndef QT_NO_COMBOBOX
         || qobject_cast<QComboBox *>(widget)
@@ -3946,7 +3947,7 @@ void QCleanlooksStyle::unpolish(QWidget *widget)
 */
 void QCleanlooksStyle::unpolish(QApplication *app)
 {
-    QWindowsStyle::unpolish(app);
+    QProxyStyle::unpolish(app);
 }
 
 /*!
@@ -3996,7 +3997,7 @@ bool QCleanlooksStyle::eventFilter(QObject *o, QEvent *e)
     default:
         break;
     }
-    return QWindowsStyle::eventFilter(o, e);
+    return QProxyStyle::eventFilter(o, e);
 }
 
 void QCleanlooksStyle::startProgressAnimation(QObject *o, QProgressBar *bar)
@@ -4025,7 +4026,7 @@ void QCleanlooksStyle::stopProgressAnimation(QObject *o, QProgressBar *bar)
 QRect QCleanlooksStyle::subControlRect(ComplexControl control, const QStyleOptionComplex *option,
                                        SubControl subControl, const QWidget *widget) const
 {
-    QRect rect = QWindowsStyle::subControlRect(control, option, subControl, widget);
+    QRect rect = QProxyStyle::subControlRect(control, option, subControl, widget);
 
     switch (control) {
 #ifndef QT_NO_SLIDER
@@ -4295,7 +4296,7 @@ QRect QCleanlooksStyle::subControlRect(ComplexControl control, const QStyleOptio
 */
 QRect QCleanlooksStyle::itemPixmapRect(const QRect &r, int flags, const QPixmap &pixmap) const
 {
-    return QWindowsStyle::itemPixmapRect(r, flags, pixmap);
+    return QProxyStyle::itemPixmapRect(r, flags, pixmap);
 }
 
 /*!
@@ -4304,7 +4305,7 @@ QRect QCleanlooksStyle::itemPixmapRect(const QRect &r, int flags, const QPixmap 
 void QCleanlooksStyle::drawItemPixmap(QPainter *painter, const QRect &rect,
                             int alignment, const QPixmap &pixmap) const
 {
-    QWindowsStyle::drawItemPixmap(painter, rect, alignment, pixmap);
+    QProxyStyle::drawItemPixmap(painter, rect, alignment, pixmap);
 }
 
 /*!
@@ -4313,7 +4314,7 @@ void QCleanlooksStyle::drawItemPixmap(QPainter *painter, const QRect &rect,
 QStyle::SubControl QCleanlooksStyle::hitTestComplexControl(ComplexControl cc, const QStyleOptionComplex *opt,
                               const QPoint &pt, const QWidget *w) const
 {
-    return QWindowsStyle::hitTestComplexControl(cc, opt, pt, w);
+    return QProxyStyle::hitTestComplexControl(cc, opt, pt, w);
 }
 
 /*!
@@ -4322,7 +4323,7 @@ QStyle::SubControl QCleanlooksStyle::hitTestComplexControl(ComplexControl cc, co
 QPixmap QCleanlooksStyle::generatedIconPixmap(QIcon::Mode iconMode, const QPixmap &pixmap,
                                         const QStyleOption *opt) const
 {
-    return QWindowsStyle::generatedIconPixmap(iconMode, pixmap, opt);
+    return QProxyStyle::generatedIconPixmap(iconMode, pixmap, opt);
 }
 
 /*!
@@ -4406,7 +4407,7 @@ int QCleanlooksStyle::styleHint(StyleHint hint, const QStyleOption *option, cons
         ret = 225; // default from GtkMenu
         break;
     default:
-        ret = QWindowsStyle::styleHint(hint, option, widget, returnData);
+        ret = QProxyStyle::styleHint(hint, option, widget, returnData);
         break;
     }
     return ret;
@@ -4415,7 +4416,7 @@ int QCleanlooksStyle::styleHint(StyleHint hint, const QStyleOption *option, cons
 /*! \reimp */
 QRect QCleanlooksStyle::subElementRect(SubElement sr, const QStyleOption *opt, const QWidget *w) const
 {
-    QRect r = QWindowsStyle::subElementRect(sr, opt, w);
+    QRect r = QProxyStyle::subElementRect(sr, opt, w);
     switch (sr) {
     case SE_PushButtonFocusRect:
         r.adjust(0, 1, 0, -1);
@@ -4450,7 +4451,7 @@ QRect QCleanlooksStyle::subElementRect(SubElement sr, const QStyleOption *opt, c
 QIcon QCleanlooksStyle::standardIcon(StandardPixmap standardIcon, const QStyleOption *option,
                                      const QWidget *widget) const
 {
-    return QWindowsStyle::standardIcon(standardIcon, option, widget);
+    return QProxyStyle::standardIcon(standardIcon, option, widget);
 }
 
 /*!
@@ -4476,7 +4477,7 @@ QPixmap QCleanlooksStyle::standardPixmap(StandardPixmap standardPixmap, const QS
     }
 #endif //QT_NO_IMAGEFORMAT_XPM
 
-    return QWindowsStyle::standardPixmap(standardPixmap, opt, widget);
+    return QProxyStyle::standardPixmap(standardPixmap, opt, widget);
 }
 
 QT_END_NAMESPACE
