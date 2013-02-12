@@ -49,7 +49,7 @@ QT_BEGIN_HEADER
 
 QT_BEGIN_NAMESPACE
 
-class Q_WIDGETS_EXPORT QCDEStyle : public QMotifStyle
+class QCDEStyle : public QMotifStyle
 {
     Q_OBJECT
 public:

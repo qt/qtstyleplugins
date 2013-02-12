@@ -51,7 +51,7 @@ QT_BEGIN_NAMESPACE
 
 class QProgressBar;
 
-class Q_WIDGETS_EXPORT QPlastiqueStyle : public QProxyStyle
+class QPlastiqueStyle : public QProxyStyle
 {
     Q_OBJECT
 

@@ -54,7 +54,7 @@ class QPalette;
 class QFocusFrame;
 class QProgressBar;
 
-class Q_WIDGETS_EXPORT QMotifStyle : public QCommonStyle
+class QMotifStyle : public QCommonStyle
 {
     Q_OBJECT
 
