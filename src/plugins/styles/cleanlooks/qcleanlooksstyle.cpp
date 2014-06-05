@@ -1749,7 +1749,7 @@ void QCleanlooksStyle::drawControl(ControlElement element, const QStyleOption *o
                     progressBar.setRect(rect.right() - 1 - width, rect.top() + 1, width + 1, rect.height() - 3);
                 }
             } else {
-                int slideWidth = ((rect.width() - 4) * 2) / 3;
+                int slideWidth = (qMax(rect.width() - 4, minWidth) * 2) / 3;
                 int step = ((animateStep * slideWidth) / progressAnimationFps) % slideWidth;
                 if ((((animateStep * slideWidth) / progressAnimationFps) % (2 * slideWidth)) >= slideWidth)
                     step = slideWidth - step;
