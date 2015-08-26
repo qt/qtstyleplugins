@@ -1,39 +1,31 @@
 /****************************************************************************
 **
-** Copyright (C) 2012 Digia Plc and/or its subsidiary(-ies).
-** Contact: http://www.qt-project.org/legal
+** Copyright (C) 2015 The Qt Company Ltd.
+** Contact: http://www.qt.io/licensing/
 **
-** This file is part of the QtGui module of the Qt Toolkit.
+** This file is part of the QtWidgets module of the Qt Toolkit.
 **
-** $QT_BEGIN_LICENSE:LGPL$
+** $QT_BEGIN_LICENSE:LGPL21$
 ** Commercial License Usage
 ** Licensees holding valid commercial Qt licenses may use this file in
 ** accordance with the commercial license agreement provided with the
 ** Software or, alternatively, in accordance with the terms contained in
-** a written agreement between you and Digia.  For licensing terms and
-** conditions see http://qt.digia.com/licensing.  For further information
-** use the contact form at http://qt.digia.com/contact-us.
+** a written agreement between you and The Qt Company. For licensing terms
+** and conditions see http://www.qt.io/terms-conditions. For further
+** information use the contact form at http://www.qt.io/contact-us.
 **
 ** GNU Lesser General Public License Usage
 ** Alternatively, this file may be used under the terms of the GNU Lesser
-** General Public License version 2.1 as published by the Free Software
-** Foundation and appearing in the file LICENSE.LGPL included in the
-** packaging of this file.  Please review the following information to
-** ensure the GNU Lesser General Public License version 2.1 requirements
-** will be met: http://www.gnu.org/licenses/old-licenses/lgpl-2.1.html.
+** General Public License version 2.1 or version 3 as published by the Free
+** Software Foundation and appearing in the file LICENSE.LGPLv21 and
+** LICENSE.LGPLv3 included in the packaging of this file. Please review the
+** following information to ensure the GNU Lesser General Public License
+** requirements will be met: https://www.gnu.org/licenses/lgpl.html and
+** http://www.gnu.org/licenses/old-licenses/lgpl-2.1.html.
 **
-** In addition, as a special exception, Digia gives you certain additional
-** rights.  These rights are described in the Digia Qt LGPL Exception
+** As a special exception, The Qt Company gives you certain additional
+** rights. These rights are described in The Qt Company LGPL Exception
 ** version 1.1, included in the file LGPL_EXCEPTION.txt in this package.
-**
-** GNU General Public License Usage
-** Alternatively, this file may be used under the terms of the GNU
-** General Public License version 3.0 as published by the Free Software
-** Foundation and appearing in the file LICENSE.GPL included in the
-** packaging of this file.  Please review the following information to
-** ensure the GNU General Public License version 3.0 requirements will be
-** met: http://www.gnu.org/copyleft/gpl.html.
-**
 **
 ** $QT_END_LICENSE$
 **
@@ -42,11 +34,14 @@
 #include <qstyleoption.h>
 #include <qpainter.h>
 #include <qpixmapcache.h>
-#include <qstringbuilder.h>
 #include <qmath.h>
+#include <qscrollbar.h>
+#include <qabstractscrollarea.h>
+#include <qwindow.h>
 
 #include "qstylecache_p.h"
 #include "qstylehelper_p.h"
+#include <qstringbuilder.h>
 
 QT_BEGIN_NAMESPACE
 
@@ -73,6 +68,30 @@ QString uniqueName(const QString &key, const QStyleOption *option, const QSize &
 #endif // QT_NO_SPINBOX
     return tmp;
 }
+
+#ifndef QT_NO_ACCESSIBILITY
+bool isInstanceOf(QObject *obj, QAccessible::Role role)
+{
+    bool match = false;
+    QAccessibleInterface *iface = QAccessible::queryAccessibleInterface(obj);
+    match = iface && iface->role() == role;
+    return match;
+}
+
+// Searches for an ancestor of a particular accessible role
+bool hasAncestor(QObject *obj, QAccessible::Role role)
+{
+    bool found = false;
+    QObject *parent = obj ? obj->parent() : 0;
+    while (parent && !found) {
+        if (isInstanceOf(parent, role))
+            found = true;
+        parent = parent->parent();
+    }
+    return found;
+}
+#endif // QT_NO_ACCESSIBILITY
+
 
 #ifndef QT_NO_DIAL
 
@@ -351,5 +370,22 @@ void drawBorderPixmap(const QPixmap &pixmap, QPainter *painter, const QRect &rec
 
     }
 }
+
+QColor backgroundColor(const QPalette &pal, const QWidget* widget)
+{
+    if (qobject_cast<const QScrollBar *>(widget) && widget->parent() &&
+            qobject_cast<const QAbstractScrollArea *>(widget->parent()->parent()))
+        return widget->parentWidget()->parentWidget()->palette().color(QPalette::Base);
+    return pal.color(QPalette::Base);
+}
+
+QWindow *styleObjectWindow(QObject *so)
+{
+    if (so)
+        return so->property("_q_styleObjectWindow").value<QWindow *>();
+
+    return 0;
+}
+
 }
 QT_END_NAMESPACE
