@@ -2432,6 +2432,7 @@ void QGtkStyle::drawComplexControl(ComplexControl control, const QStyleOptionCom
 
                 arrowRect.moveCenter(downRect.center());
 
+                state = GTK_STATE_NORMAL;
                 if (!(option->state & State_Enabled) || !(spinBox->stepEnabled & QAbstractSpinBox::StepDownEnabled))
                     state = GTK_STATE_INSENSITIVE;
 
