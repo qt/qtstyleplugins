@@ -3615,7 +3615,7 @@ void QPlastiqueStyle::drawControl(ControlElement element, const QStyleOption *op
                 // we need the label to be drawn using ButtonText where it
                 // would usually use Text.
                 painter->setPen(QPen(comboBox->palette.buttonText(), 0));
-                QProxyStyle::drawControl(element, option, painter, widget);
+                QCommonStyle::drawControl(element, option, painter, widget);
             } else if (!comboBox->currentIcon.isNull()) {
                 {
                     QRect editRect = proxy()->subControlRect(CC_ComboBox, comboBox, SC_ComboBoxEditField, widget);
