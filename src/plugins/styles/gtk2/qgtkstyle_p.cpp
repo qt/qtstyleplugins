@@ -88,6 +88,8 @@ QT_BEGIN_NAMESPACE
 
 Q_GLOBAL_STATIC(QGtkStyleUpdateScheduler, styleScheduler)
 
+Ptr_ubuntu_gtk_set_use_overlay_scrollbar QGtkStylePrivate::ubuntu_gtk_set_use_overlay_scrollbar = 0;
+
 typedef int (*x11ErrorHandler)(Display*, XErrorEvent*);
 
 QT_END_NAMESPACE
@@ -275,6 +277,10 @@ void QGtkStylePrivate::initGtkWidgets() const
     x11ErrorHandler qt_x_errhandler = XSetErrorHandler(0);
     gtk_init (NULL, NULL);
     XSetErrorHandler(qt_x_errhandler);
+
+    ubuntu_gtk_set_use_overlay_scrollbar = (Ptr_ubuntu_gtk_set_use_overlay_scrollbar)QLibrary::resolve(QLS("gtk-x11-2.0"), "ubuntu_gtk_set_use_overlay_scrollbar");
+    if (ubuntu_gtk_set_use_overlay_scrollbar)
+        ubuntu_gtk_set_use_overlay_scrollbar(false);
 
     // make a window
     GtkWidget* gtkWindow = gtk_window_new(GTK_WINDOW_POPUP);

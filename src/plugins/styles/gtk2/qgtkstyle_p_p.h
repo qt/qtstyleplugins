@@ -107,6 +107,8 @@ bool operator==(const QHashableLatin1Literal &l1, const QHashableLatin1Literal &
 inline bool operator!=(const QHashableLatin1Literal &l1, const QHashableLatin1Literal &l2) { return !operator==(l1, l2); }
 uint qHash(const QHashableLatin1Literal &key);
 
+typedef void (*Ptr_ubuntu_gtk_set_use_overlay_scrollbar) (gboolean);
+
 class QGtkPainter;
 class QGtkStylePrivate;
 
@@ -167,6 +169,8 @@ public:
     virtual int getSpinboxArrowSize() const;
 
     virtual QPalette gtkWidgetPalette(const QHashableLatin1Literal &gtkWidgetName) const;
+
+    static Ptr_ubuntu_gtk_set_use_overlay_scrollbar ubuntu_gtk_set_use_overlay_scrollbar;
 
 protected:
     typedef QHash<QHashableLatin1Literal, GtkWidget*> WidgetMap;
