@@ -162,9 +162,6 @@ public:
     static QFont getThemeFont();
     static bool isThemeAvailable() { return gtkStyle() != 0; }
 
-    static bool getGConfBool(const QString &key, bool fallback = 0);
-    static QString getGConfString(const QString &key, const QString &fallback = QString());
-
     static QString getThemeName();
     virtual int getSpinboxArrowSize() const;
 

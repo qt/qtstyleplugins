@@ -255,24 +255,6 @@ static const int groupBoxBottomMargin    =  2;  // space below the groupbox
 static const int groupBoxTitleMargin     =  6;  // space between contents and title
 static const int groupBoxTopMargin       =  2;
 
-/*!
-  Returns the configuration string for \a value.
-  Returns \a fallback if \a value is not found.
- */
-QString QGtkStyle::getGConfString(const QString &value, const QString &fallback)
-{
-    return QGtkStylePrivate::getGConfString(value, fallback);
-}
-
-/*!
-  Returns the configuration boolean for \a key.
-  Returns \a fallback if \a key is not found.
- */
-bool QGtkStyle::getGConfBool(const QString &key, bool fallback)
-{
-    return QGtkStylePrivate::getGConfBool(key, fallback);
-}
-
 static QColor mergedColors(const QColor &colorA, const QColor &colorB, int factor = 50)
 {
     const int maxFactor = 100;
@@ -846,7 +828,9 @@ int QGtkStyle::styleHint(StyleHint hint, const QStyleOption *option, const QWidg
     }
 
     case SH_DialogButtonBox_ButtonsHaveIcons: {
-        static bool buttonsHaveIcons = d->getGConfBool(QLS("/desktop/gnome/interface/buttons_have_icons"));
+        gboolean buttonsHaveIcons = true;
+        GtkSettings *settings = gtk_settings_get_default();
+        g_object_get(settings, "gtk-button-images", &buttonsHaveIcons, NULL);
         return buttonsHaveIcons;
     }
 

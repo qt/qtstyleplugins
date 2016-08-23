@@ -66,8 +66,6 @@
 #include <QtWidgets/QToolBar>
 #include <QtWidgets/QToolButton>
 
-#include <gconf/gconf-client.h>
-
 // X11 Includes:
 
 // the following is necessary to work around breakage in many versions
@@ -365,42 +363,6 @@ void QGtkStylePrivate::cleanupGtkWidgets()
     for (QHash<QHashableLatin1Literal, GtkWidget *>::const_iterator it = widgetMap->constBegin();
          it != widgetMap->constEnd(); ++it)
         free(const_cast<char *>(it.key().data()));
-}
-
-QString QGtkStylePrivate::getGConfString(const QString &value, const QString &fallback)
-{
-    QString retVal = fallback;
-#if !defined(GLIB_VERSION_2_36)
-    g_type_init();
-#endif
-    GConfClient* client = gconf_client_get_default();
-    GError *err = 0;
-    char *str = gconf_client_get_string(client, qPrintable(value), &err);
-    if (!err) {
-        retVal = QString::fromUtf8(str);
-        g_free(str);
-    }
-    g_object_unref(client);
-    if (err)
-        g_error_free (err);
-    return retVal;
-}
-
-bool QGtkStylePrivate::getGConfBool(const QString &key, bool fallback)
-{
-    bool retVal = fallback;
-#if !defined(GLIB_VERSION_2_36)
-    g_type_init();
-#endif
-    GConfClient* client = gconf_client_get_default();
-    GError *err = 0;
-    bool result = gconf_client_get_bool(client, qPrintable(key), &err);
-    g_object_unref(client);
-    if (!err)
-        retVal = result;
-    else
-        g_error_free (err);
-    return retVal;
 }
 
 QString QGtkStylePrivate::getThemeName()
