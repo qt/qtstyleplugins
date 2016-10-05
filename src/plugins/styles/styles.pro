@@ -5,6 +5,6 @@ SUBDIRS = \
     plastique \
     bb10style
 
-packagesExist(gconf-2.0 gtk+-2.0 x11) {
+packagesExist(gtk+-2.0 x11) {
     SUBDIRS += gtk2
 }
