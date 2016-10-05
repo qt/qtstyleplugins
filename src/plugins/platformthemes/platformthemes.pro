@@ -1,2 +1,5 @@
 TEMPLATE = subdirs
-SUBDIRS = gtk2
+
+packagesExist(gtk+-2.0) {
+    SUBDIRS += gtk2
+}
