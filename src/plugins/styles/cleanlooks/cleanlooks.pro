@@ -1,5 +1,6 @@
 TARGET  = qcleanlooksstyle
 PLUGIN_TYPE = styles
+PLUGIN_CLASS_NAME = QCleanlooksStylePlugin
 load(qt_plugin)
 
 QT = core gui widgets

@@ -1,5 +1,6 @@
 TARGET  = qgtk2style
 PLUGIN_TYPE = styles
+PLUGIN_CLASS_NAME = QGtk2StylePlugin
 load(qt_plugin)
 
 QT = core-private gui-private widgets-private
