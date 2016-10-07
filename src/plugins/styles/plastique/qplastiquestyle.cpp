@@ -1298,15 +1298,15 @@ void QPlastiqueStyle::drawPrimitive(PrimitiveElement element, const QStyleOption
 #ifndef QT_NO_GROUPBOX
     case PE_FrameGroupBox:
         if (const QStyleOptionFrame *frame = qstyleoption_cast<const QStyleOptionFrame *>(option)) {
-            QStyleOptionFrameV2 frameV2(*frame);
-            if (frameV2.features & QStyleOptionFrameV2::Flat) {
+            if (frame->features & QStyleOptionFrame::Flat) {
                 QPen oldPen = painter->pen();
                 painter->setPen(borderColor);
-                painter->drawLine(frameV2.rect.topLeft(), frameV2.rect.topRight());
+                painter->drawLine(frame->rect.topLeft(), frame->rect.topRight());
                 painter->setPen(oldPen);
             } else {
-                frameV2.state &= ~(State_Sunken | State_HasFocus);
-                proxy()->drawPrimitive(PE_Frame, &frameV2, painter, widget);
+                QStyleOptionFrame frame2(*frame);
+                frame2.state &= ~(State_Sunken | State_HasFocus);
+                proxy()->drawPrimitive(PE_Frame, &frame2, painter, widget);
             }
         }
         break;
@@ -2436,15 +2436,9 @@ void QPlastiqueStyle::drawControl(ControlElement element, const QStyleOption *op
             painter->setFont(font);
             painter->setPen(bar->palette.text().color());
 
-            bool vertical = false;
-            bool inverted = false;
-            bool bottomToTop = false;
-            // Get extra style options if version 2
-            if (const QStyleOptionProgressBarV2 *bar2 = qstyleoption_cast<const QStyleOptionProgressBarV2 *>(option)) {
-                vertical = (bar2->orientation == Qt::Vertical);
-                inverted = bar2->invertedAppearance;
-                bottomToTop = bar2->bottomToTop;
-            }
+            bool vertical = (bar->orientation == Qt::Vertical);
+            bool inverted = bar->invertedAppearance;
+            bool bottomToTop = bar->bottomToTop;
 
             if (vertical) {
                 rect = QRect(rect.left(), rect.top(), rect.height(), rect.width()); // flip width and height
@@ -2499,19 +2493,13 @@ void QPlastiqueStyle::drawControl(ControlElement element, const QStyleOption *op
     case CE_ProgressBarContents:
         if (const QStyleOptionProgressBar *bar = qstyleoption_cast<const QStyleOptionProgressBar *>(option)) {
             QRect rect = bar->rect;
-            bool vertical = false;
-            bool inverted = false;
+            bool vertical = (bar->orientation == Qt::Vertical);
+            bool inverted = bar->invertedAppearance;
             bool indeterminate = (bar->minimum == 0 && bar->maximum == 0);
             if (!indeterminate && bar->progress == -1)
                 break;
 
             painter->save();
-
-            // Get extra style options if version 2
-            if (const QStyleOptionProgressBarV2 *bar2 = qstyleoption_cast<const QStyleOptionProgressBarV2 *>(option)) {
-                vertical = (bar2->orientation == Qt::Vertical);
-                inverted = bar2->invertedAppearance;
-            }
 
             // If the orientation is vertical, we use a transform to rotate
             // the progress bar 90 degrees clockwise.  This way we can use the
@@ -3114,9 +3102,7 @@ void QPlastiqueStyle::drawControl(ControlElement element, const QStyleOption *op
         if (const QStyleOptionDockWidget *dockWidget = qstyleoption_cast<const QStyleOptionDockWidget *>(option)) {
             painter->save();
 
-            const QStyleOptionDockWidgetV2 *v2
-                = qstyleoption_cast<const QStyleOptionDockWidgetV2*>(dockWidget);
-            bool verticalTitleBar = v2 == 0 ? false : v2->verticalTitleBar;
+            bool verticalTitleBar = dockWidget->verticalTitleBar;
 
             // Find text width and title rect
             int textWidth = option->fontMetrics.width(dockWidget->title);

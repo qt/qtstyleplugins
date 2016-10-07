@@ -1241,27 +1241,22 @@ void QGtkStyle::drawPrimitive(PrimitiveElement element,
             GtkStateType state = GTK_STATE_NORMAL; // Only state supported by gtknotebook
             bool reverse = (option->direction == Qt::RightToLeft);
             gtk_widget_set_direction(gtkNotebook, reverse ? GTK_TEXT_DIR_RTL : GTK_TEXT_DIR_LTR);
-            if (const QStyleOptionTabWidgetFrameV2 *tabframe = qstyleoption_cast<const QStyleOptionTabWidgetFrameV2*>(option)) {
-                GtkPositionType frameType = GTK_POS_TOP;
-                QTabBar::Shape shape = frame->shape;
-                int gapStart = 0;
-                int gapSize = 0;
-                if (shape == QTabBar::RoundedNorth || shape == QTabBar::RoundedSouth) {
-                    frameType = (shape == QTabBar::RoundedNorth) ? GTK_POS_TOP : GTK_POS_BOTTOM;
-                    gapStart = tabframe->selectedTabRect.left();
-                    gapSize = tabframe->selectedTabRect.width();
-                } else {
-                    frameType = (shape == QTabBar::RoundedWest) ? GTK_POS_LEFT : GTK_POS_RIGHT;
-                    gapStart = tabframe->selectedTabRect.y();
-                    gapSize = tabframe->selectedTabRect.height();
-                }
-                gtkPainter->paintBoxGap(gtkNotebook, "notebook", option->rect, state, shadow, frameType,
-                                        gapStart, gapSize, style);
-                break; // done
-            }
 
-            // Note this is only the fallback option
-            gtkPainter->paintBox(gtkNotebook, "notebook", option->rect, state, shadow, style);
+            GtkPositionType frameType = GTK_POS_TOP;
+            QTabBar::Shape shape = frame->shape;
+            int gapStart = 0;
+            int gapSize = 0;
+            if (shape == QTabBar::RoundedNorth || shape == QTabBar::RoundedSouth) {
+                frameType = (shape == QTabBar::RoundedNorth) ? GTK_POS_TOP : GTK_POS_BOTTOM;
+                gapStart = frame->selectedTabRect.left();
+                gapSize = frame->selectedTabRect.width();
+            } else {
+                frameType = (shape == QTabBar::RoundedWest) ? GTK_POS_LEFT : GTK_POS_RIGHT;
+                gapStart = frame->selectedTabRect.y();
+                gapSize = frame->selectedTabRect.height();
+            }
+            gtkPainter->paintBoxGap(gtkNotebook, "notebook", option->rect, state, shadow, frameType,
+                                    gapStart, gapSize, style);
         }
         break;
 
@@ -2663,11 +2658,8 @@ void QGtkStyle::drawControl(ControlElement element,
             QColor alternateTextColor= QColor(gdkText.red>>8, gdkText.green>>8, gdkText.blue>>8);
 
             painter->save();
-            bool vertical = false, inverted = false;
-            if (const QStyleOptionProgressBarV2 *bar2 = qstyleoption_cast<const QStyleOptionProgressBarV2 *>(option)) {
-                vertical = (bar2->orientation == Qt::Vertical);
-                inverted = bar2->invertedAppearance;
-            }
+            bool vertical = (bar->orientation == Qt::Vertical);
+            bool inverted = bar->invertedAppearance;
             if (vertical)
                 rect = QRect(rect.left(), rect.top(), rect.height(), rect.width()); // flip width and height
             const int progressIndicatorPos = (bar->progress - qreal(bar->minimum)) * rect.width() /
@@ -2870,9 +2862,7 @@ void QGtkStyle::drawControl(ControlElement element,
     case CE_DockWidgetTitle:
         painter->save();
         if (const QStyleOptionDockWidget *dwOpt = qstyleoption_cast<const QStyleOptionDockWidget *>(option)) {
-            const QStyleOptionDockWidgetV2 *v2
-                = qstyleoption_cast<const QStyleOptionDockWidgetV2*>(dwOpt);
-            bool verticalTitleBar = v2 == 0 ? false : v2->verticalTitleBar;
+            bool verticalTitleBar = dwOpt->verticalTitleBar;
 
             QRect rect = dwOpt->rect;
             QRect titleRect = subElementRect(SE_DockWidgetTitleBarText, option, widget).adjusted(-2, 0, -2, 0);
@@ -3443,15 +3433,9 @@ void QGtkStyle::drawControl(ControlElement element,
             int xt = style->xthickness;
             int yt = style->ythickness;
             QRect rect = bar->rect.adjusted(xt, yt, -xt, -yt);
-            bool vertical = false;
-            bool inverted = false;
+            bool vertical = (bar->orientation == Qt::Vertical);
+            bool inverted = bar->invertedAppearance;
             bool indeterminate = (bar->minimum == 0 && bar->maximum == 0);
-            // Get extra style options if version 2
-
-            if (const QStyleOptionProgressBarV2 *bar2 = qstyleoption_cast<const QStyleOptionProgressBarV2 *>(option)) {
-                vertical = (bar2->orientation == Qt::Vertical);
-                inverted = bar2->invertedAppearance;
-            }
 
             // If the orientation is vertical, we use a transform to rotate
             // the progress bar 90 degrees clockwise.  This way we can use the
@@ -4147,9 +4131,9 @@ QRect QGtkStyle::subElementRect(SubElement element, const QStyleOption *option, 
         r.adjust(0, 1, 0, -1);
         break;
     case SE_DockWidgetTitleBarText: {
-        const QStyleOptionDockWidgetV2 *v2
-            = qstyleoption_cast<const QStyleOptionDockWidgetV2*>(option);
-        bool verticalTitleBar = v2 == 0 ? false : v2->verticalTitleBar;
+        const QStyleOptionDockWidget *dwOpt
+            = qstyleoption_cast<const QStyleOptionDockWidget*>(option);
+        bool verticalTitleBar = dwOpt && dwOpt->verticalTitleBar;
         if (verticalTitleBar) {
             r.adjust(0, 0, 0, -4);
         } else {

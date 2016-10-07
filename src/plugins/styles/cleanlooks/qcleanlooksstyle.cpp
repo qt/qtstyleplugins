@@ -1591,9 +1591,7 @@ void QCleanlooksStyle::drawControl(ControlElement element, const QStyleOption *o
     case CE_DockWidgetTitle:
         painter->save();
         if (const QStyleOptionDockWidget *dwOpt = qstyleoption_cast<const QStyleOptionDockWidget *>(option)) {
-            const QStyleOptionDockWidgetV2 *v2
-                = qstyleoption_cast<const QStyleOptionDockWidgetV2*>(dwOpt);
-            bool verticalTitleBar = v2 == 0 ? false : v2->verticalTitleBar;
+            bool verticalTitleBar = dwOpt->verticalTitleBar;
 
             QRect titleRect = subElementRect(SE_DockWidgetTitleBarText, option, widget);
             if (verticalTitleBar) {
@@ -1711,15 +1709,9 @@ void QCleanlooksStyle::drawControl(ControlElement element, const QStyleOption *o
         painter->save();
         if (const QStyleOptionProgressBar *bar = qstyleoption_cast<const QStyleOptionProgressBar *>(option)) {
             QRect rect = bar->rect;
-            bool vertical = false;
-            bool inverted = false;
+            bool vertical = (bar->orientation == Qt::Vertical);
+            bool inverted = bar->invertedAppearance;
             bool indeterminate = (bar->minimum == 0 && bar->maximum == 0);
-
-            // Get extra style options if version 2
-            if (const QStyleOptionProgressBarV2 *bar2 = qstyleoption_cast<const QStyleOptionProgressBarV2 *>(option)) {
-                vertical = (bar2->orientation == Qt::Vertical);
-                inverted = bar2->invertedAppearance;
-            }
 
             // If the orientation is vertical, we use a transform to rotate
             // the progress bar 90 degrees clockwise.  This way we can use the
@@ -3337,11 +3329,11 @@ void QCleanlooksStyle::drawComplexControl(ComplexControl control, const QStyleOp
         if (const QStyleOptionGroupBox *groupBox = qstyleoption_cast<const QStyleOptionGroupBox *>(option)) {
             QRect textRect = proxy()->subControlRect(CC_GroupBox, groupBox, SC_GroupBoxLabel, widget);
             QRect checkBoxRect = proxy()->subControlRect(CC_GroupBox, groupBox, SC_GroupBoxCheckBox, widget);
-            bool flat = groupBox->features & QStyleOptionFrameV2::Flat;
+            bool flat = groupBox->features & QStyleOptionFrame::Flat;
 
             if (!flat) {
                 if (groupBox->subControls & QStyle::SC_GroupBoxFrame) {
-                    QStyleOptionFrameV2 frame;
+                    QStyleOptionFrame frame;
                     frame.QStyleOption::operator=(*groupBox);
                     frame.features = groupBox->features;
                     frame.lineWidth = groupBox->lineWidth;
@@ -4129,7 +4121,7 @@ QRect QCleanlooksStyle::subControlRect(ComplexControl control, const QStyleOptio
             int topMargin = 0;
             int topHeight = 0;
             int verticalAlignment = proxy()->styleHint(SH_GroupBox_TextLabelVerticalAlignment, groupBox, widget);
-            bool flat = groupBox->features & QStyleOptionFrameV2::Flat;
+            bool flat = groupBox->features & QStyleOptionFrame::Flat;
             if (!groupBox->text.isEmpty()) {
                 topHeight = groupBox->fontMetrics.height();
                 if (verticalAlignment & Qt::AlignVCenter)
@@ -4422,9 +4414,9 @@ QRect QCleanlooksStyle::subElementRect(SubElement sr, const QStyleOption *opt, c
         r.adjust(0, 1, 0, -1);
         break;
     case SE_DockWidgetTitleBarText: {
-        const QStyleOptionDockWidgetV2 *v2
-            = qstyleoption_cast<const QStyleOptionDockWidgetV2*>(opt);
-        bool verticalTitleBar = v2 == 0 ? false : v2->verticalTitleBar;
+        const QStyleOptionDockWidget *dwOpt
+            = qstyleoption_cast<const QStyleOptionDockWidget*>(opt);
+        bool verticalTitleBar = dwOpt && dwOpt->verticalTitleBar;
         if (verticalTitleBar) {
             r.adjust(0, 0, 0, -4);
         } else {

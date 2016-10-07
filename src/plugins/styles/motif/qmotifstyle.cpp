@@ -744,9 +744,8 @@ void QMotifStyle::drawPrimitive(PrimitiveElement pe, const QStyleOption *opt, QP
 
     case PE_IndicatorProgressChunk:
         {
-            bool vertical = false;
-            if (const QStyleOptionProgressBarV2 *pb2 = qstyleoption_cast<const QStyleOptionProgressBarV2 *>(opt))
-                vertical = (pb2->orientation == Qt::Vertical);
+            const QStyleOptionProgressBar *pb = qstyleoption_cast<const QStyleOptionProgressBar *>(opt);
+            bool vertical = pb && (pb->orientation == Qt::Vertical);
             if (!vertical) {
                 p->fillRect(opt->rect.x(), opt->rect.y(), opt->rect.width(),
                             opt->rect.height(), opt->palette.brush(QPalette::Highlight));
@@ -995,14 +994,9 @@ void QMotifStyle::drawControl(ControlElement element, const QStyleOption *opt, Q
         if (const QStyleOptionProgressBar *pb = qstyleoption_cast<const QStyleOptionProgressBar *>(opt)) {
             QTransform oldMatrix = p->transform();
             QRect rect = pb->rect;
-            bool vertical = false;
-            bool invert = false;
-            bool bottomToTop = false;
-            if (const QStyleOptionProgressBarV2 *pb2 = qstyleoption_cast<const QStyleOptionProgressBarV2 *>(opt)) {
-                vertical = (pb2->orientation == Qt::Vertical);
-                invert = pb2->invertedAppearance;
-                bottomToTop = pb2->bottomToTop;
-            }
+            bool vertical = (pb->orientation == Qt::Vertical);
+            bool invert = pb->invertedAppearance;
+            bool bottomToTop = pb->bottomToTop;
             if (vertical) {
                 QTransform m;
                 rect = QRect(rect.left(), rect.top(), rect.height(), rect.width()); // flip width and height
@@ -1259,15 +1253,8 @@ void QMotifStyle::drawControl(ControlElement element, const QStyleOption *opt, Q
     case CE_ProgressBarContents:
         if (const QStyleOptionProgressBar *pb = qstyleoption_cast<const QStyleOptionProgressBar *>(opt)) {
             QRect rect = pb->rect;
-            bool vertical = false;
-            bool inverted = false;
-
-            // Get extra style options if version 2
-            const QStyleOptionProgressBarV2 *pb2 = qstyleoption_cast<const QStyleOptionProgressBarV2 *>(opt);
-            if (pb2) {
-                vertical = (pb2->orientation == Qt::Vertical);
-                inverted = pb2->invertedAppearance;
-            }
+            bool vertical = (pb->orientation == Qt::Vertical);
+            bool inverted = pb->invertedAppearance;
 
             QTransform m;
             if (vertical) {
