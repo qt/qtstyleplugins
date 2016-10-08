@@ -57,14 +57,14 @@ public:
     virtual ~QCDEStyle();
 
     int pixelMetric(PixelMetric metric, const QStyleOption *option = 0,
-                    const QWidget *widget = 0) const;
+                    const QWidget *widget = 0) const Q_DECL_OVERRIDE;
     void drawControl(ControlElement element, const QStyleOption *opt, QPainter *p,
-                     const QWidget *w = 0) const;
+                     const QWidget *w = 0) const Q_DECL_OVERRIDE;
     void drawPrimitive(PrimitiveElement pe, const QStyleOption *opt, QPainter *p,
-                       const QWidget *w = 0) const;
-    QPalette standardPalette() const;
+                       const QWidget *w = 0) const Q_DECL_OVERRIDE;
+    QPalette standardPalette() const Q_DECL_OVERRIDE;
     QIcon standardIcon(StandardPixmap standardIcon, const QStyleOption *opt = 0,
-                       const QWidget *widget = 0) const;
+                       const QWidget *widget = 0) const Q_DECL_OVERRIDE;
 };
 
 QT_END_NAMESPACE

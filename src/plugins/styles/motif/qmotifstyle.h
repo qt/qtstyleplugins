@@ -65,47 +65,47 @@ public:
     void setUseHighlightColors(bool);
     bool useHighlightColors() const;
 
-    void polish(QPalette&);
-    void polish(QWidget*);
-    void unpolish(QWidget*);
-    void polish(QApplication*);
-    void unpolish(QApplication*);
+    void polish(QPalette&) Q_DECL_OVERRIDE;
+    void polish(QWidget*) Q_DECL_OVERRIDE;
+    void unpolish(QWidget*) Q_DECL_OVERRIDE;
+    void polish(QApplication*) Q_DECL_OVERRIDE;
+    void unpolish(QApplication*) Q_DECL_OVERRIDE;
 
     void drawPrimitive(PrimitiveElement pe, const QStyleOption *opt, QPainter *p,
-                        const QWidget *w = 0) const;
+                        const QWidget *w = 0) const Q_DECL_OVERRIDE;
 
     void drawControl(ControlElement element, const QStyleOption *opt, QPainter *p,
-                      const QWidget *w = 0) const;
+                      const QWidget *w = 0) const Q_DECL_OVERRIDE;
 
     void drawComplexControl(ComplexControl cc, const QStyleOptionComplex *opt, QPainter *p,
-                            const QWidget *w = 0) const;
+                            const QWidget *w = 0) const Q_DECL_OVERRIDE;
 
     QRect subControlRect(ComplexControl cc, const QStyleOptionComplex *opt,
-                         SubControl sc, const QWidget *widget = 0) const;
+                         SubControl sc, const QWidget *widget = 0) const Q_DECL_OVERRIDE;
 
     int pixelMetric(PixelMetric metric, const QStyleOption *option = 0,
-                     const QWidget *widget = 0) const;
+                     const QWidget *widget = 0) const Q_DECL_OVERRIDE;
 
     QSize sizeFromContents(ContentsType ct, const QStyleOption *opt,
-                           const QSize &contentsSize, const QWidget *widget = 0) const;
+                           const QSize &contentsSize, const QWidget *widget = 0) const Q_DECL_OVERRIDE;
 
-    QRect subElementRect(SubElement r, const QStyleOption *opt, const QWidget *widget = 0) const;
+    QRect subElementRect(SubElement r, const QStyleOption *opt,const QWidget *widget = 0) const Q_DECL_OVERRIDE;
 
     QPixmap standardPixmap(StandardPixmap standardPixmap, const QStyleOption *opt,
-                           const QWidget *widget = 0) const;
+                           const QWidget *widget = 0) const Q_DECL_OVERRIDE;
 
     int styleHint(StyleHint hint, const QStyleOption *opt = 0, const QWidget *widget = 0,
-                  QStyleHintReturn *returnData = 0) const;
+                  QStyleHintReturn *returnData = 0) const Q_DECL_OVERRIDE;
 
-    bool event(QEvent *);
-    QPalette standardPalette() const;
+    bool event(QEvent *) Q_DECL_OVERRIDE;
+    QPalette standardPalette() const Q_DECL_OVERRIDE;
     QIcon standardIcon(StandardPixmap standardIcon, const QStyleOption *opt = 0,
-                       const QWidget *widget = 0) const;
+                       const QWidget *widget = 0) const Q_DECL_OVERRIDE;
 
 protected:
     QPointer<QFocusFrame> focus;
-    void timerEvent(QTimerEvent *event);
-    bool eventFilter(QObject *o, QEvent *e);
+    void timerEvent(QTimerEvent *event) Q_DECL_OVERRIDE;
+    bool eventFilter(QObject *o, QEvent *e) Q_DECL_OVERRIDE;
 
 private:
     bool highlightCols;

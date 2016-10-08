@@ -60,47 +60,47 @@ public:
     ~QPlastiqueStyle();
 
     void drawPrimitive(PrimitiveElement element, const QStyleOption *option,
-                       QPainter *painter, const QWidget *widget = 0) const;
+                       QPainter *painter, const QWidget *widget = 0) const Q_DECL_OVERRIDE;
     void drawControl(ControlElement element, const QStyleOption *option,
-                     QPainter *painter, const QWidget *widget) const;
+                     QPainter *painter, const QWidget *widget) const Q_DECL_OVERRIDE;
     void drawComplexControl(ComplexControl control, const QStyleOptionComplex *option,
-                            QPainter *painter, const QWidget *widget) const;
+                            QPainter *painter, const QWidget *widget) const Q_DECL_OVERRIDE;
     QSize sizeFromContents(ContentsType type, const QStyleOption *option,
-                           const QSize &size, const QWidget *widget) const;
+                           const QSize &size, const QWidget *widget) const Q_DECL_OVERRIDE;
 
-    QRect subElementRect(SubElement element, const QStyleOption *option, const QWidget *widget) const;
+    QRect subElementRect(SubElement element, const QStyleOption *option, const QWidget *widget) const Q_DECL_OVERRIDE;
     QRect subControlRect(ComplexControl cc, const QStyleOptionComplex *opt,
-                         SubControl sc, const QWidget *widget) const;
+                         SubControl sc, const QWidget *widget) const Q_DECL_OVERRIDE;
 
     int styleHint(StyleHint hint, const QStyleOption *option = 0, const QWidget *widget = 0,
-                  QStyleHintReturn *returnData = 0) const;
+                  QStyleHintReturn *returnData = 0) const Q_DECL_OVERRIDE;
     SubControl hitTestComplexControl(ComplexControl control, const QStyleOptionComplex *option,
-                                     const QPoint &pos, const QWidget *widget = 0) const;
+                                     const QPoint &pos, const QWidget *widget = 0) const Q_DECL_OVERRIDE;
 
-    int pixelMetric(PixelMetric metric, const QStyleOption *option = 0, const QWidget *widget = 0) const;
+    int pixelMetric(PixelMetric metric, const QStyleOption *option = 0, const QWidget *widget = 0) const Q_DECL_OVERRIDE;
 
     QPixmap standardPixmap(StandardPixmap standardPixmap, const QStyleOption *opt,
-                           const QWidget *widget = 0) const;
+                           const QWidget *widget = 0) const Q_DECL_OVERRIDE;
 
-    void polish(QWidget *widget);
-    void polish(QApplication *app);
-    void polish(QPalette &pal);
-    void unpolish(QWidget *widget);
-    void unpolish(QApplication *app);
+    void polish(QWidget *widget) Q_DECL_OVERRIDE;
+    void polish(QApplication *app) Q_DECL_OVERRIDE;
+    void polish(QPalette &pal) Q_DECL_OVERRIDE;
+    void unpolish(QWidget *widget) Q_DECL_OVERRIDE;
+    void unpolish(QApplication *app) Q_DECL_OVERRIDE;
 
-    QPalette standardPalette() const;
+    QPalette standardPalette() const Q_DECL_OVERRIDE;
 
     QIcon standardIcon(StandardPixmap standardIcon, const QStyleOption *opt = 0,
-                       const QWidget *widget = 0) const;
+                       const QWidget *widget = 0) const Q_DECL_OVERRIDE;
     int layoutSpacing(QSizePolicy::ControlType control1,
                       QSizePolicy::ControlType control2,
                       Qt::Orientation orientation,
                       const QStyleOption *option = 0,
-                      const QWidget *widget = 0) const;
+                      const QWidget *widget = 0) const Q_DECL_OVERRIDE;
 
 protected:
-    bool eventFilter(QObject *watched, QEvent *event);
-    void timerEvent(QTimerEvent *event);
+    bool eventFilter(QObject *watched, QEvent *event) Q_DECL_OVERRIDE;
+    void timerEvent(QTimerEvent *event) Q_DECL_OVERRIDE;
 
 private:
     int animateStep;

@@ -46,15 +46,15 @@ public:
     QBB10BrightStyle();
     ~QBB10BrightStyle();
 
-    void polish(QApplication *application);
-    void polish(QWidget *widget);
+    void polish(QApplication *application) Q_DECL_OVERRIDE;
+    void polish(QWidget *widget) Q_DECL_OVERRIDE;
 
-    QPalette standardPalette() const;
+    QPalette standardPalette() const Q_DECL_OVERRIDE;
 
     void drawControl(ControlElement element, const QStyleOption *option,
-            QPainter *painter, const QWidget *widget = 0) const;
+            QPainter *painter, const QWidget *widget = 0) const Q_DECL_OVERRIDE;
     void drawPrimitive(PrimitiveElement element, const QStyleOption *option,
-                       QPainter *painter, const QWidget *widget) const;
+                       QPainter *painter, const QWidget *widget) const Q_DECL_OVERRIDE;
 };
 
 QT_END_NAMESPACE

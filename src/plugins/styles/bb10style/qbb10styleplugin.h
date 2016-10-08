@@ -47,7 +47,7 @@ public:
     QBB10StylePlugin();
     ~QBB10StylePlugin();
 
-    QStyle *create(const QString &key);
+    QStyle *create(const QString &key) Q_DECL_OVERRIDE;
     QStringList keys() const;
 };
 
