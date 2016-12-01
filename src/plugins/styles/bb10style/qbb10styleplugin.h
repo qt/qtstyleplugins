@@ -48,7 +48,6 @@ public:
     ~QBB10StylePlugin();
 
     QStyle *create(const QString &key) Q_DECL_OVERRIDE;
-    QStringList keys() const;
 };
 
 QT_END_NAMESPACE

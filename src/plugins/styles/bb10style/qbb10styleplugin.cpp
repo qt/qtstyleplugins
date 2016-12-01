@@ -56,11 +56,6 @@ QStyle *QBB10StylePlugin::create(const QString &key)
     return 0;
 }
 
-QStringList QBB10StylePlugin::keys() const
-{
-    return QStringList() << QLatin1String("bb10bright") << QLatin1String("bb10dark");
-}
-
 QT_END_NAMESPACE
 
 #include "moc_qbb10styleplugin.cpp"
