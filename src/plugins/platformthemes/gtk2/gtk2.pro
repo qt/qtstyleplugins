@@ -1,6 +1,10 @@
 TARGET = qgtk2
 
-QT += core-private gui-private platformsupport-private
+QT += core-private gui-private
+greaterThan(QT_MAJOR_VERSION, 5)|greaterThan(QT_MINOR_VERSION, 7): \
+    QT += theme_support-private
+else: \
+    QT += platformsupport-private
 
 CONFIG += X11
 CONFIG += link_pkgconfig
