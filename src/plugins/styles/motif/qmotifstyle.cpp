@@ -114,7 +114,6 @@ QMotifStyle::QMotifStyle(bool useHighlightCols) : QCommonStyle(), focus(0),
     highlightCols(useHighlightCols), animationFps(25), animateTimer(0), animateStep(0),
     spinboxHCoeff(6)
 {
-    startTime.start();
 }
 
 /*!
@@ -136,31 +135,51 @@ bool QMotifStyle::eventFilter(QObject *o, QEvent *e)
 #ifndef QT_NO_PROGRESSBAR
     switch (e->type()) {
     case QEvent::StyleChange:
+    case QEvent::Paint:
     case QEvent::Show:
         if (QProgressBar *bar = qobject_cast<QProgressBar *>(o)) {
-            bars << bar;
-            if (bars.size() == 1) {
-                Q_ASSERT(animationFps> 0);
-                animateTimer = startTimer(1000 / animationFps);
-            }
+            // Animation by timer for progress bars that have their min and
+            // max values the same
+            if (bar->minimum() == bar->maximum())
+                startProgressAnimation(bar);
+            else
+                stopProgressAnimation(bar);
         }
         break;
     case QEvent::Destroy:
     case QEvent::Hide:
         // reinterpret_cast because there is no type info when getting
         // the destroy event. We know that it is a QProgressBar.
-        if (QProgressBar *bar = reinterpret_cast<QProgressBar *>(o)) {
-            bars.removeAll(bar);
-            if (bars.isEmpty() && animateTimer) {
-                killTimer(animateTimer);
-                animateTimer = 0;
-            }
-        }
+        stopProgressAnimation(reinterpret_cast<QProgressBar *>(o));
     default:
         break;
     }
 #endif // QT_NO_PROGRESSBAR
     return QStyle::eventFilter(o, e);
+}
+
+void QMotifStyle::startProgressAnimation(QProgressBar *bar)
+{
+    if (!bars.contains(bar)) {
+        bars << bar;
+        if (bars.size() == 1) {
+            Q_ASSERT(animationFps > 0);
+            animateStep = 0;
+            startTime.start();
+            animateTimer = startTimer(1000 / animationFps);
+        }
+    }
+}
+
+void QMotifStyle::stopProgressAnimation(QProgressBar *bar)
+{
+    if (!bars.isEmpty()) {
+        bars.removeOne(bar);
+        if (bars.isEmpty() && animateTimer) {
+            killTimer(animateTimer);
+            animateTimer = 0;
+        }
+    }
 }
 
 /*!
@@ -271,7 +290,7 @@ void QMotifStyle::unpolish(QWidget* widget)
 #ifndef QT_NO_PROGRESSBAR
     if (qobject_cast<QProgressBar *>(widget)) {
         widget->removeEventFilter(this);
-        bars.removeAll(static_cast<QProgressBar*>(widget));
+        bars.removeOne(static_cast<QProgressBar*>(widget));
      }
 #endif
 }

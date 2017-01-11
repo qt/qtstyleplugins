@@ -100,7 +100,9 @@ public:
 
 protected:
     bool eventFilter(QObject *watched, QEvent *event) Q_DECL_OVERRIDE;
-    void timerEvent(QTimerEvent *event) Q_DECL_OVERRIDE;
+    bool event(QEvent *event) Q_DECL_OVERRIDE;
+    void startProgressAnimation(QProgressBar *bar);
+    void stopProgressAnimation(QProgressBar *bar);
 
 private:
     int animateStep;

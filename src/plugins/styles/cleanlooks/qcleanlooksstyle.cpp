@@ -609,7 +609,6 @@ static void qt_cleanlooks_draw_mdibutton(QPainter *painter, const QStyleOptionTi
 QCleanlooksStyle::QCleanlooksStyle() : QProxyStyle(QStyleFactory::create(QLatin1String("Windows"))), animateStep(0), animateTimer(0)
 {
     setObjectName(QLatin1String("CleanLooks"));
-    startTime.start();
 }
 
 /*!
@@ -3945,17 +3944,26 @@ void QCleanlooksStyle::unpolish(QApplication *app)
 /*!
   \reimp
 */
-void QCleanlooksStyle::timerEvent(QTimerEvent *event)
+bool QCleanlooksStyle::event(QEvent *event)
 {
+    switch (event->type()) {
+    case QEvent::Timer: {
 #ifndef QT_NO_PROGRESSBAR
-    if (event->timerId() == animateTimer) {
-        Q_ASSERT(progressAnimationFps> 0);
-        animateStep = startTime.elapsed() / (1000 / progressAnimationFps);
-        foreach (QProgressBar *bar, animatedProgressBars)
-            bar->update();
-    }
+        QTimerEvent *timerEvent = reinterpret_cast<QTimerEvent *>(event);
+        if (timerEvent->timerId() == animateTimer) {
+            Q_ASSERT(progressAnimationFps > 0);
+            animateStep = startTime.elapsed() / (1000 / progressAnimationFps);
+            foreach (QProgressBar *bar, animatedProgressBars)
+                bar->update();
+        }
 #endif // QT_NO_PROGRESSBAR
-    event->ignore();
+        event->ignore();
+    }
+    default:
+        break;
+    }
+
+    return QProxyStyle::event(event);
 }
 
 /*!
@@ -3998,6 +4006,8 @@ void QCleanlooksStyle::startProgressAnimation(QObject *o, QProgressBar *bar)
         animatedProgressBars << bar;
         if (!animateTimer) {
             Q_ASSERT(progressAnimationFps > 0);
+            animateStep = 0;
+            startTime.start();
             animateTimer = o->startTimer(1000 / progressAnimationFps);
         }
     }
@@ -4005,10 +4015,12 @@ void QCleanlooksStyle::startProgressAnimation(QObject *o, QProgressBar *bar)
 
 void QCleanlooksStyle::stopProgressAnimation(QObject *o, QProgressBar *bar)
 {
-    animatedProgressBars.removeAll(bar);
-    if (animatedProgressBars.isEmpty() && animateTimer) {
-        o->killTimer(animateTimer);
-        animateTimer = 0;
+    if (!animatedProgressBars.isEmpty()) {
+        animatedProgressBars.removeOne(bar);
+        if (animatedProgressBars.isEmpty() && animateTimer) {
+            o->killTimer(animateTimer);
+            animateTimer = 0;
+        }
     }
 }
 

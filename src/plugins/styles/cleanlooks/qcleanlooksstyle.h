@@ -97,7 +97,7 @@ public:
 
 
 protected:
-    void timerEvent(QTimerEvent *) Q_DECL_OVERRIDE;
+    bool event(QEvent *event) Q_DECL_OVERRIDE;
     bool eventFilter(QObject *o, QEvent *e) Q_DECL_OVERRIDE;
     void startProgressAnimation(QObject *o, QProgressBar *bar);
     void stopProgressAnimation(QObject *o, QProgressBar *bar);

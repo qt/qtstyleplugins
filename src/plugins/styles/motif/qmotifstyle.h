@@ -106,6 +106,8 @@ protected:
     QPointer<QFocusFrame> focus;
     void timerEvent(QTimerEvent *event) Q_DECL_OVERRIDE;
     bool eventFilter(QObject *o, QEvent *e) Q_DECL_OVERRIDE;
+    void startProgressAnimation(QProgressBar *bar);
+    void stopProgressAnimation(QProgressBar *bar);
 
 private:
     bool highlightCols;

@@ -5657,7 +5657,7 @@ void QPlastiqueStyle::unpolish(QWidget *widget)
 #ifndef QT_NO_PROGRESSBAR
     if (AnimateBusyProgressBar && qobject_cast<QProgressBar *>(widget)) {
         widget->removeEventFilter(this);
-        bars.removeAll(static_cast<QProgressBar*>(widget));
+        bars.removeOne(static_cast<QProgressBar*>(widget));
     }
 #endif
 
@@ -5779,25 +5779,21 @@ bool QPlastiqueStyle::eventFilter(QObject *watched, QEvent *event)
 {
 #ifndef QT_NO_PROGRESSBAR
     switch (event->type()) {
+    case QEvent::StyleChange:
+    case QEvent::Paint:
     case QEvent::Show:
         if (QProgressBar *bar = qobject_cast<QProgressBar *>(watched)) {
-            bars.append(bar);
-            if (bars.size() == 1) {
-                Q_ASSERT(ProgressBarFps > 0);
-                timer.start();
-                progressBarAnimateTimer = startTimer(1000 / ProgressBarFps);
-            }
+            // Animation by timer for progress bars that have their min and
+            // max values the same
+            if (bar->minimum() == bar->maximum())
+                startProgressAnimation(bar);
+            else
+                stopProgressAnimation(bar);
         }
         break;
     case QEvent::Destroy:
     case QEvent::Hide:
-        if (!bars.isEmpty()) {
-            bars.removeAll(reinterpret_cast<QProgressBar*>(watched));
-            if (bars.isEmpty()) {
-                killTimer(progressBarAnimateTimer);
-                progressBarAnimateTimer = 0;
-            }
-        }
+        stopProgressAnimation(reinterpret_cast<QProgressBar *>(watched));
         break;
 #if defined QPlastique_MaskButtons
     case QEvent::Resize:
@@ -5828,19 +5824,52 @@ bool QPlastiqueStyle::eventFilter(QObject *watched, QEvent *event)
 /*!
     \reimp
 */
-void QPlastiqueStyle::timerEvent(QTimerEvent *event)
+bool QPlastiqueStyle::event(QEvent *event)
 {
+    switch (event->type()) {
+    case QEvent::Timer: {
 #ifndef QT_NO_PROGRESSBAR
-    if (event->timerId() == progressBarAnimateTimer) {
-        Q_ASSERT(ProgressBarFps > 0);
-        animateStep = timer.elapsed() / (1000 / ProgressBarFps);
-        foreach (QProgressBar *bar, bars) {
-            if (AnimateProgressBar || (bar->minimum() == 0 && bar->maximum() == 0))
-                bar->update();
+        QTimerEvent *timerEvent = reinterpret_cast<QTimerEvent *>(event);
+        if (timerEvent->timerId() == progressBarAnimateTimer) {
+            Q_ASSERT(ProgressBarFps > 0);
+            animateStep = timer.elapsed() / (1000 / ProgressBarFps);
+            foreach (QProgressBar *bar, bars) {
+                if (AnimateProgressBar || (bar->minimum() == 0 && bar->maximum() == 0))
+                    bar->update();
+            }
+        }
+#endif // QT_NO_PROGRESSBAR
+        event->ignore();
+    }
+    default:
+        break;
+    }
+
+    return QProxyStyle::event(event);
+}
+
+void QPlastiqueStyle::startProgressAnimation(QProgressBar *bar)
+{
+    if (!bars.contains(bar)) {
+        bars << bar;
+        if (bars.size() == 1) {
+            Q_ASSERT(ProgressBarFps > 0);
+            animateStep = 0;
+            timer.start();
+            progressBarAnimateTimer = startTimer(1000 / ProgressBarFps);
         }
     }
-#endif // QT_NO_PROGRESSBAR
-    event->ignore();
+}
+
+void QPlastiqueStyle::stopProgressAnimation(QProgressBar *bar)
+{
+    if (!bars.isEmpty()) {
+        bars.removeOne(bar);
+        if (bars.isEmpty() && progressBarAnimateTimer) {
+            killTimer(progressBarAnimateTimer);
+            progressBarAnimateTimer = 0;
+        }
+    }
 }
 
 QT_END_NAMESPACE
