@@ -3634,7 +3634,7 @@ void QPlastiqueStyle::drawControl(ControlElement element, const QStyleOption *op
         break;
 #endif
     default:
-        QProxyStyle::drawControl(element, option, painter, widget);
+        QCommonStyle::drawControl(element, option, painter, widget);
         break;
     }
 }
