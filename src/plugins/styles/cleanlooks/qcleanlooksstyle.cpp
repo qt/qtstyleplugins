@@ -2325,7 +2325,7 @@ void QCleanlooksStyle::drawControl(ControlElement element, const QStyleOption *o
 
 #endif // QT_NO_TABBAR
     default:
-        QProxyStyle::drawControl(element,option,painter,widget);
+        QCommonStyle::drawControl(element,option,painter,widget);
         break;
     }
 }
