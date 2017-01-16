@@ -4863,7 +4863,6 @@ QSize QPlastiqueStyle::sizeFromContents(ContentsType type, const QStyleOption *o
 #ifndef QT_NO_SPINBOX
     case CT_SpinBox:
         // Make sure the size is odd
-        newSize.setHeight(sizeFromContents(CT_LineEdit, option, size, widget).height());
         newSize.rheight() -= ((1 - newSize.rheight()) & 1);
         break;
 #endif
