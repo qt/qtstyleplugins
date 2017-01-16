@@ -111,7 +111,8 @@ static const int motifCheckMarkSpace    = 16;
   text color.
 */
 QMotifStyle::QMotifStyle(bool useHighlightCols) : QCommonStyle(), focus(0),
-    highlightCols(useHighlightCols), animationFps(25), animateTimer(0), animateStep(0)
+    highlightCols(useHighlightCols), animationFps(25), animateTimer(0), animateStep(0),
+    spinboxHCoeff(6)
 {
     startTime.start();
 }
@@ -1902,6 +1903,14 @@ QMotifStyle::sizeFromContents(ContentsType ct, const QStyleOption *opt,
         }
         break;
 
+#ifndef QT_NO_SPINBOX
+    case CT_SpinBox:
+        if (const QStyleOptionSpinBox *vopt = qstyleoption_cast<const QStyleOptionSpinBox *>(opt)) {
+            if (vopt->frame)
+                sz.rheight() += spinboxHCoeff * proxy()->pixelMetric(PM_SpinBoxFrameWidth, vopt, widget);
+        }
+        break;
+#endif
 
     default:
         sz = QCommonStyle::sizeFromContents(ct, opt, contentsSize, widget);

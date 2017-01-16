@@ -114,6 +114,9 @@ private:
     int animateTimer;
     QTime startTime;
     int animateStep;
+
+protected:
+    int spinboxHCoeff;
 };
 
 QT_END_NAMESPACE

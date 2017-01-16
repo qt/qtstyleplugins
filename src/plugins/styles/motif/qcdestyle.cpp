@@ -100,6 +100,7 @@ QT_BEGIN_NAMESPACE
 QCDEStyle::QCDEStyle(bool useHighlightCols)
     : QMotifStyle(useHighlightCols)
 {
+    spinboxHCoeff = 10;
 }
 
 /*!
